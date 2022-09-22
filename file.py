@@ -21,6 +21,9 @@ def sHostnameToValidPathdescriptor(sURL):
     #return urlparse(sURL).hostname.replace(".", "_")[-2]
 #endregion
 
+def sUrlPathToValidPathdescriptor(sURL):
+    print(urlparse(sURL).path.replace("/", "__"))
+    return urlparse(sURL).path.replace("/", "__")
 
 #region Directory
 def bIsDir(path):

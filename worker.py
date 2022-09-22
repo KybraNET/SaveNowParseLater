@@ -23,7 +23,8 @@ class ToDownload(Thread):
         self.counter = 1
         
     def download(self):
-        sPath = joinDir(self.path, sDate(dt.now()))
+        sPath = joinDir(self.path, sUrlPathToValidPathdescriptor(self.url) + sDate(dt.now()))        
+        print(sPath)
         html = getHtml(self.url)
         if html is not None:
             write(sPath + ".html", html)
