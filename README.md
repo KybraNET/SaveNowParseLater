@@ -13,7 +13,7 @@ How To USE:
   - You can set a different path in first Constant->WORKING_DIR <br />SaveNowParseLater create a new directory in that path for each URL you added to config file. 
 
 Info:
-  - If you dont like to add values to config file by own you can use the dicWrite function in file.py for saving own dictionay
+  - If you dont like to add values to config file by own you can use the dicWrite function in file.py for creating a config.txt
   - worker.py is Main! If you want to entire functionality of the SaveNowParseLater than just import that module
 
 Its just some simple tool but if you like that tool please leave a Star :)
