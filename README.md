@@ -1,21 +1,26 @@
 # SaveNowParseLater
 
-A Web data scientist often extracts data from (HTML) websites. Many websites are content delivery systems, whose content is renewed several times within a day. In order for the scientist to have a certain amount of data, this tool should help him. More time for parsing. This tool acts as a worker and brings the necessary basic functionality. 
-Disclaimer:
+This tool acts as a worker and automates the (web) data extraction process, allowing you more time for parsing and analysis.
+
+## Useful for
+Extracting data from websites. It's especially useful for content delivery systems that renew their content frequently throughout the day. 
+
+## How to Use:
+
+  - Add the URLs and corresponding timer intervals to the config.txt file.
+  - Set a different path in the WORKING_DIR constant if desired.
+  - SaveNowParseLater will create a new directory in the specified path for each URL added to the config file.
+  
+  ```
+    https://thewebsiteyouwannadownload.com 5
+    https://anotherwebsite.org 3
+   ```
+   
+## Nfo
+- Use the dicWrite function in file.py to create a config.txt file automatically.
+- worker.py is the main module and contains the entire functionality of SaveNowParseLater.
+  
+
+## Disclaimer:
    The mining of data is subject to the terms and conditions of the site you wish to mine and the laws of your jurisdiction. 
    The author assumes no liability for the use of the tool.
-
-How To USE:
-  - Add Data to config.txt. You need to add the url and the minutes to set the cyclic timer. <br />
-    https://thewebsiteyouwannadownload.com 5<br />
-    https://anotherwebsite.org 3
-
-  - You can set a different path in first Constant->WORKING_DIR <br />SaveNowParseLater create a new directory in that path for each URL you added to config file. 
-
-Info:
-  - If you dont like to add values to config file by own you can use the dicWrite function in file.py for creating a config.txt
-  - worker.py is Main! If you want to entire functionality of the SaveNowParseLater than just import that module
-
-Its just some simple tool but if you like that tool please leave a Star :)
-Iam not sure when it's possible to continue with these repo, because i have lot work load in my private repos/ business
-
