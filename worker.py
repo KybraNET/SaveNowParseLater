@@ -15,6 +15,9 @@ SEC_PER_MINUTE = 60
 
 LOGS = WORKING_DIR + "logs.txt"
 
+#If some url not working, how much retrys until killing the 
+MAX_TRY_ATTEMTPS = 10
+
 #https://pythonexamples.org/python-logging-info/
 #region Logging-Init
 logger = logging.getLogger('mylogger')
@@ -45,46 +48,43 @@ class ToDownload(Thread):
         self.url = sUrl
         self.path = sPath
         self.intervall = lInterval 
-        self.counter = 1
+        self.errorcounter = 0
         
     def download(self):
-        sPath = joinDir(self.path, sUrlPathToValidPathdescriptor(self.url) + sDate(dt.now()))        
-        #print(sPath)
-        html = getHtml(self.url)
-        if html is not None:
-            write(sPath + ".html", html)
-            return True
-        return False
+        oResponse = getHtml(self.url)
 
+        if issubclass(type(oResponse), Exception):
+            logger.error(f"Failed to download {self.url}: Code {oResponse.status_code} Header: {oResponse.request.headers} FullResponse: {oResponse} xxxCallStackxxx: {traceback.format_exc()}")
+        elif oResponse.status_code != 200:
+            logger.error(f"Failed to download {self.url}: Code {oResponse.status_code} Header: {oResponse.request.headers}")            
+        else:
+            logger.info(f"Successfully downloaded {self.url} and waiting {self.intervall}")                
+            sPath = joinDir(self.path, sUrlPathToValidPathdescriptor(self.url) + sDate(dt.now()))        
+            write(sPath + ".html", oResponse.content)
+            return True
+        
+        return False
+                
     def run(self):
         
         try:
             while True:
-                if self.download():
-                #print("Downloaded: {0} Waiting {1} minutes".format(self.url, str(self.intervall)))
-                    logger.info(f"Successfully downloaded {self.url} and waiting {self.intervall}")                
-                    time.sleep(self.intervall * SEC_PER_MINUTE)
-                elif self.download():
-                    logger.info(f"Successfully downloaded {self.url} and waiting {self.intervall}")                
-                    time.sleep(self.intervall * SEC_PER_MINUTE)
-                else:
-                    raise Exception('Server Response is not a 200 ok code!')
+                if self.errorcounter >= 10:
+                    raise Exception("Tried 10 times now killing the thread")
+                if not self.download():
+                    self.errorcounter += 1            
                     
+                    #We increment the wating time by the error counter
+                    time.sleep((self.intervall * self.errorcounter) * SEC_PER_MINUTE)                    
+                else:
+                    #if last download was sucessfull, than we rest the errorcounter
+                    self.errorcounter = 0    
+                    time.sleep(self.intervall * SEC_PER_MINUTE)
+                
+                                        
         except Exception as e:
-
             logger.error(f"Failed to download {self.url}: {e} xxxCallStackxxx: {traceback.format_exc()}")
-            
-            #TODO: Den ganzen StakcTrace noch mit Loggen ?
-            
-            #TODO: Wollen wir nach ner bestimmenten anzahl
-            #z.B der ist hier drei mal hintereinander rein gelaufen, dann
-            # fegen wir den raus aus den worker, quee, oder benachrichtigen ggf?
-            
-            # #NOTE: Logging after Download if faile!
-            # print("WRITE LOGS")
-            # exc = sys.exc_info()[0]
-            # #stack = traceback.extract_stack()[:-1]  # last one would be full_stack()
-            # writeLog(str(dt.now()) + "__" + self.url + "__" + "xxxSTACKxxx: " + traceback.format_exc())
+
         
 
 def work():
@@ -97,6 +97,14 @@ def work():
                 
             oToDownload = ToDownload(k, dicToDownload[k], sPath)    
             oToDownload.start()
+            
+        ip = None   
+        try:
+            ip = getHtml("https://ident.me").content
+        except:
+            pass
+        logger.info(f"Worker Startet. My IP is: {}")                
+
     else:
         print("Cant start worker, no config data!")
  

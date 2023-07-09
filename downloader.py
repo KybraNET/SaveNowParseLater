@@ -18,13 +18,10 @@ def getFakeHeader():
     return {"User-Agent" : ua.random}        
 
 def getHtml(sUrl):
-    if not FAKE_AGENT:
-        oResponse = requests.get(sUrl)
-    else:
-        oResponse = requests.get(sUrl, headers=getFakeHeader())
-        
-    return oResponse.content if oResponse.status_code == 200 else None
-        
+    try:                                        
+        return requests.get(sUrl) if not FAKE_AGENT else requests.get(sUrl, headers=getFakeHeader())
+    except Exception as e:
+        return e
 #region tests
 # print(getHtml("https://ident.me"))
 # print(getHtml("https://httpstat.us/403"))
