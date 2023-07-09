@@ -103,7 +103,7 @@ def work():
             ip = getHtml("https://ident.me").content
         except:
             pass
-        logger.info(f"Worker Startet. My IP is: {}")                
+        logger.info(f"Worker Startet. My IP is: {ip}")                
 
     else:
         print("Cant start worker, no config data!")
