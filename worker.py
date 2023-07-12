@@ -54,7 +54,7 @@ class ToDownload(Thread):
         oResponse = getHtml(self.url)
 
         if issubclass(type(oResponse), Exception):
-            logger.error(f"Failed to download {self.url}: Code {oResponse.status_code} Header: {oResponse.request.headers} FullResponse: {oResponse} xxxCallStackxxx: {traceback.format_exc()}")
+            logger.error(f"Failed to download {self.url} Exception: {str(oResponse)} xxxCallStackxxx: {traceback.format_exc()}")
         elif oResponse.status_code != 200:
             logger.error(f"Failed to download {self.url}: Code {oResponse.status_code} Header: {oResponse.request.headers}")            
         else:
